@@ -1,35 +1,77 @@
-import { SearchEntry, Weather } from '../../lib/types'
+import { useEffect, useState } from 'react'
+
+import useGetGeoQuery from '../../hooks/useGetGeoQuery'
+import useGetWeatherQuery from '../../hooks/useGetWeatherQuery'
+import { SearchEntry } from '../../lib/types'
+import AlertError from '../Alerts/AlertError'
 import Container from '../Container'
 import Layout from '../Layout'
 import WeatherSearchForm from '../WeatherSearchForm'
 import WeatherSearchHistory from '../WeatherSearchHistory'
 import WeatherSearchResult from '../WeatherSearchResult'
 
-const weatherMock: Weather = {
-  coord: { lon: 106.7011, lat: 10.7764 },
-  weather: [{ id: 802, main: 'Clouds', description: 'scattered clouds' }],
-  main: {
-    temp_min: 25.95,
-    temp_max: 25.95,
-    humidity: 69
-  },
-  sys: {
-    country: 'VN'
-  },
-  name: 'Ho Chi Minh City'
-}
-const searchHistoryMock: SearchEntry[] = [
-  { city: 'Ho Chi Minh City', country: 'VN', time: new Date(2023, 12, 12) },
-  { city: 'London', country: 'GB', time: new Date() }
-]
-
 const App = () => {
+  const [searchHistory, setSearchHistory] = useState<SearchEntry[]>([])
+  const {
+    data: geoData,
+    error: geoError,
+    loading: geoLoading,
+    execute: fetchGeo
+  } = useGetGeoQuery()
+  const {
+    data: weatherData,
+    error: weatherError,
+    loading: weatherLoading,
+    execute: fetchWeather
+  } = useGetWeatherQuery()
+
+  useEffect(() => {
+    if (!geoData) return
+
+    fetchWeather({ lat: geoData.lat, lon: geoData.lon })
+  }, [fetchWeather, geoData])
+
+  useEffect(() => {
+    if (!weatherData) return
+
+    setSearchHistory((prevState) => {
+      if (prevState.find(({ id }) => id === weatherData.id)) return prevState
+
+      return [
+        {
+          id: weatherData.id,
+          city: weatherData.name,
+          country: weatherData.sys.country,
+          lat: weatherData.coord.lat,
+          lon: weatherData.coord.lon,
+          dt: weatherData.dt * 1000
+        },
+        ...prevState
+      ]
+    })
+  }, [weatherData])
+
   return (
     <Layout>
       <Container>
-        <WeatherSearchForm />
-        <WeatherSearchResult time={new Date()} weatherDetails={weatherMock} />
-        <WeatherSearchHistory entries={searchHistoryMock} />
+        <WeatherSearchForm
+          loading={geoLoading || weatherLoading}
+          fetchGeo={fetchGeo}
+        />
+
+        {geoError && <AlertError>{geoError.message}</AlertError>}
+
+        {weatherError && <AlertError>{weatherError.message}</AlertError>}
+
+        {!geoError && !weatherError && weatherData && (
+          <WeatherSearchResult weatherDetails={weatherData} />
+        )}
+
+        <WeatherSearchHistory
+          entries={searchHistory}
+          fetchWeather={fetchWeather}
+          setSearchHistory={setSearchHistory}
+        />
       </Container>
     </Layout>
   )

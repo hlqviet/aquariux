@@ -1,6 +1,7 @@
 import { ErrorMessage } from '@hookform/error-message'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
+import useGetGeoQuery from '../../hooks/useGetGeoQuery'
 import ButtonBase from '../Buttons/ButtonBase'
 import ButtonPrimary from '../Buttons/ButtonPrimary'
 import TextField from '../TextField'
@@ -12,7 +13,13 @@ const defaultValues = {
 
 type WeatherFormValues = typeof defaultValues
 
-const WeatherSearchForm = () => {
+interface WeatherSearchFormProps {
+  loading: boolean
+  fetchGeo: ReturnType<typeof useGetGeoQuery>['execute']
+}
+
+const WeatherSearchForm = (props: WeatherSearchFormProps) => {
+  const { loading, fetchGeo } = props
   const {
     formState: { errors, isSubmitting },
     register,
@@ -22,7 +29,9 @@ const WeatherSearchForm = () => {
     defaultValues
   })
 
-  const onSubmit: SubmitHandler<WeatherFormValues> = () => {}
+  const onSubmit: SubmitHandler<WeatherFormValues> = async (data) => {
+    await fetchGeo(data)
+  }
 
   const onClear = () => {
     reset()
@@ -52,8 +61,8 @@ const WeatherSearchForm = () => {
         />
         <div className='flex gap-4'>
           <ButtonPrimary
-            disabled={isSubmitting}
-            loading={isSubmitting}
+            disabled={loading || isSubmitting}
+            loading={loading || isSubmitting}
             type='submit'
           >
             Search
@@ -61,7 +70,7 @@ const WeatherSearchForm = () => {
           <ButtonBase onClick={onClear}>Clear</ButtonBase>
         </div>
       </div>
-      <ul className='my-4 list-disc text-red-500'>
+      <ul className='ml-4 my-4 list-disc text-red-500'>
         {Object.keys(defaultValues).map((field) =>
           errors[field as keyof WeatherFormValues] ? (
             <li key={field}>

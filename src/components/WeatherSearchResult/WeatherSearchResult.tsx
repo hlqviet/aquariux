@@ -2,13 +2,13 @@ import { Weather } from '../../lib/types'
 import DetailRow from './components/DetailRow'
 
 interface WeatherSearchResultProps {
-  time: Date
   weatherDetails: Weather
 }
 
 const WeatherSearchResult = (props: WeatherSearchResultProps) => {
-  const { time, weatherDetails } = props
+  const { weatherDetails } = props
   const {
+    dt,
     main: { humidity, temp_max: tempMax, temp_min: tempMin },
     name,
     sys: { country },
@@ -22,7 +22,7 @@ const WeatherSearchResult = (props: WeatherSearchResultProps) => {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true
-    }).formatToParts(time)
+    }).formatToParts(dt * 1000)
 
   return (
     <div className='prose my-8'>

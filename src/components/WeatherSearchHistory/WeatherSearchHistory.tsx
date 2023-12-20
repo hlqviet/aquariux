@@ -1,12 +1,30 @@
+import { Dispatch, SetStateAction } from 'react'
+
+import useGetWeatherQuery from '../../hooks/useGetWeatherQuery'
 import { SearchEntry } from '../../lib/types'
+import ButtonCircle from '../Buttons/ButtonCircle'
+import SearchIcon from '../Icons/SearchIcon'
+import TrashIcon from '../Icons/TrashIcon'
 import HistoryEntryRow from './HistoryEntryRow'
 
 interface WeatherSearchHistoryProps {
   entries: SearchEntry[]
+  fetchWeather: ReturnType<typeof useGetWeatherQuery>['execute']
+  setSearchHistory: Dispatch<SetStateAction<SearchEntry[]>>
 }
 
 const WeatherSearchHistory = (props: WeatherSearchHistoryProps) => {
-  const { entries } = props
+  const { entries, fetchWeather, setSearchHistory } = props
+
+  const onSearch = async (lat: number, lon: number) => {
+    await fetchWeather({ lat, lon })
+  }
+
+  const onDelete = (deletingId: number) => {
+    setSearchHistory((prevState) =>
+      prevState.filter(({ id }) => id !== deletingId)
+    )
+  }
 
   return (
     <div>
@@ -21,11 +39,20 @@ const WeatherSearchHistory = (props: WeatherSearchHistoryProps) => {
       {entries.length > 0 && (
         <div>
           {entries.map((entry, index) => (
-            <HistoryEntryRow
-              key={`${entry.city}-${entry.country}-${entry.time.toString()}`}
-              index={index + 1}
-              entry={entry}
-            />
+            <HistoryEntryRow key={entry.id} index={index + 1} entry={entry}>
+              <ButtonCircle
+                className='btn-sm md:btn-md'
+                onClick={() => onSearch(entry.lat, entry.lon)}
+              >
+                <SearchIcon />
+              </ButtonCircle>
+              <ButtonCircle
+                className='btn-sm md:btn-md'
+                onClick={() => onDelete(entry.id)}
+              >
+                <TrashIcon />
+              </ButtonCircle>
+            </HistoryEntryRow>
           ))}
         </div>
       )}

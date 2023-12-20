@@ -1,21 +1,21 @@
+import { PropsWithChildren } from 'react'
+
 import { SearchEntry } from '../../../lib/types'
-import ButtonCircle from '../../Buttons/ButtonCircle'
-import SearchIcon from '../../Icons/SearchIcon'
-import TrashIcon from '../../Icons/TrashIcon'
 
 interface HistoryEntryRowProps {
   index: number
   entry: SearchEntry
 }
 
-const HistoryEntryRow = (props: HistoryEntryRowProps) => {
+const HistoryEntryRow = (props: PropsWithChildren<HistoryEntryRowProps>) => {
   const {
     index,
-    entry: { city, country, time }
+    children,
+    entry: { city, country, dt }
   } = props
 
   return (
-    <div className='py-3 border-b border-b-solid flex justify-between items-center'>
+    <div className='py-3 border-b border-b-solid flex flex-wrap justify-between items-center'>
       <div className='text-sm md:text-base'>
         {index}. {city}, {country}
       </div>
@@ -25,16 +25,11 @@ const HistoryEntryRow = (props: HistoryEntryRowProps) => {
             hour12: true,
             timeStyle: 'medium'
           })
-            .format(time)
+            .format(dt * 1000)
             .replace('am', 'AM')
             .replace('pm', 'PM')}
         </span>
-        <ButtonCircle className='btn-sm md:btn-md'>
-          <SearchIcon />
-        </ButtonCircle>
-        <ButtonCircle className='btn-sm md:btn-md'>
-          <TrashIcon />
-        </ButtonCircle>
+        {children}
       </div>
     </div>
   )

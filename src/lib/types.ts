@@ -1,4 +1,12 @@
+export type Geo = {
+  name: string
+  lat: number
+  lon: number
+  country: string
+}
+
 export type Weather = {
+  id: number
   coord: {
     lon: number
     lat: number
@@ -17,10 +25,14 @@ export type Weather = {
     country: string
   }
   name: string
+  dt: number
 }
 
 export type SearchEntry = {
+  id: number
   city: string
   country: string
-  time: Date
+  lat: number
+  lon: number
+  dt: number
 }
