@@ -18,3 +18,9 @@ export type Weather = {
   }
   name: string
 }
+
+export type SearchEntry = {
+  city: string
+  country: string
+  time: Date
+}

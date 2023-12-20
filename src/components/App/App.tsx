@@ -1,7 +1,8 @@
-import { Weather } from '../../lib/types'
+import { SearchEntry, Weather } from '../../lib/types'
 import Container from '../Container'
 import Layout from '../Layout'
 import WeatherSearchForm from '../WeatherSearchForm'
+import WeatherSearchHistory from '../WeatherSearchHistory'
 import WeatherSearchResult from '../WeatherSearchResult'
 
 const weatherMock: Weather = {
@@ -17,6 +18,10 @@ const weatherMock: Weather = {
   },
   name: 'Ho Chi Minh City'
 }
+const searchHistoryMock: SearchEntry[] = [
+  { city: 'Ho Chi Minh City', country: 'VN', time: new Date(2023, 12, 12) },
+  { city: 'London', country: 'GB', time: new Date() }
+]
 
 const App = () => {
   return (
@@ -24,6 +29,7 @@ const App = () => {
       <Container>
         <WeatherSearchForm />
         <WeatherSearchResult time={new Date()} weatherDetails={weatherMock} />
+        <WeatherSearchHistory entries={searchHistoryMock} />
       </Container>
     </Layout>
   )
