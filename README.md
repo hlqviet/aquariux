@@ -1,4 +1,9 @@
-# Getting Started with Create React App
+# Aquariux
+
+## Prerequisites
+
+1. Open Weather API key: https://home.openweathermap.org/api_keys
+2. Copy `.env.example` to `.env.local` and insert the API key
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
