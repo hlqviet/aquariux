@@ -35,6 +35,7 @@ const App = () => {
     if (!weatherData) return
 
     setSearchHistory((prevState) => {
+      // Prevent adding duplicate history entry
       if (prevState.find(({ id }) => id === weatherData.id)) return prevState
 
       return [
