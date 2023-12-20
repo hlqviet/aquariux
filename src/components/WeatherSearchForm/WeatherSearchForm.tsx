@@ -40,6 +40,10 @@ const WeatherSearchForm = () => {
         <TextField
           label='Country'
           {...register('country', {
+            required: {
+              value: true,
+              message: 'Country is required'
+            },
             pattern: {
               value: /^[A-Za-z]{2}$/i,
               message: 'Please use ISO 3166 country codes (e.g. US, GB)'
@@ -57,7 +61,7 @@ const WeatherSearchForm = () => {
           <ButtonBase onClick={onClear}>Clear</ButtonBase>
         </div>
       </div>
-      <ul className='mt-4 list-disc text-red-500'>
+      <ul className='my-4 list-disc text-red-500'>
         {Object.keys(defaultValues).map((field) =>
           errors[field as keyof WeatherFormValues] ? (
             <li key={field}>
