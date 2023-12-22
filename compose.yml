@@ -1,0 +1,7 @@
+services:
+  frontend:
+    build:
+      context: .
+    container_name: aquariux
+    ports:
+      - '$PORT:80'
